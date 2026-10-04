@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор отчета библиотекаря</title>
+    <!-- Подключаем библиотеку для работы с Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .section {
+            background: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #2980b9;
+            font-size: 1.2em;
+            margin-top: 0;
+        }
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px;
+            transition: background 0.2s;
+        }
+        .option-item:hover {
+            background: #f0f8ff;
+        }
+        .input-field {
+            margin-left: 20px;
+            margin-top: 5px;
+            display: none;
+            width: calc(100% - 40px);
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .controls {
+            text-align: center;
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        button {
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-yaml { background-color: #27ae60; }
+        .btn-yaml:hover { background-color: #219150; }
+        .btn-excel { background-color: #1f7244; } /* Цвет Excel */
+        .btn-excel:hover { background-color: #165a35; }
+        
+        .footer {
+            text-align: center;
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📚 Конструктор отчетности</h1>
+
+    <div class="section">
+        <h2>📅 Общая информация</h2>
+        <div class="option-group">
+            <label>Период отчета: <input type="text" id="period" placeholder="Напр: Октябрь 2023"></label>
+            <label>ФИО библиотекаря: <input type="text" id="librarian" placeholder="Иванова И.И."></label>
+        </div>
+    </div>
+
+    <div class="section" data-section="fond">
+        <h2>📦 Работа с фондом</h2>
+        <div class="option-group">
+            <div class="option-item">
+                <input type="checkbox" id="chk_postup" onchange="toggleInput('input_postup')"> 
+                <label for="chk_postup">Поступления</label>
+            </div>
+            <input type="text" id="input_postup" class="input-field" placeholder="Кол-во или описание">
+
+            <div class="option-item">
+                <input type="checkbox" id="chk_spis" onchange="toggleInput('input_spis')"> 
+                <label for="chk_spis">Списания</label>
+            </div>
+            <input type="text" id="input_spis" class="input-field" placeholder="Кол-во или описание">
+
+            <div class="option-item">
+                <input type="checkbox" id="chk_kat" onchange="toggleInput('input_kat')"> 
+                <label for="chk_kat">Каталогизация/Обработка</label>
+            </div>
+            <input type="text" id="input_kat" class="input-field" placeholder="Кол-во или описание">
+
+            <div class="option-item">
+                <input type="checkbox" id="chk_inv" onchange="toggleInput('input_inv')"> 
+                <label for="chk_inv">Инвентаризация</label>
+            </div>
+            <input type="text" id="input_inv" class="input-field" placeholder="Результат проверки">
+        </div>
+    </div>
+
+    <div class="section" data-section="readers">
+        <h2>👥 Работа с читателями</h2>
+        <div class="option-group">
+            <div class="option-item">
+                <input type="checkbox" id="chk_visit" onchange="toggleInput('input_visit')"> 
+                <label for="chk_visit">Посещаемость</label>
+            </div>
+            <input type="text" id="input_visit" class="input-field" placeholder="Кол-во посещений">
+
+            <div class="option-item">
+                <input type="checkbox" id="chk_issue" onchange="toggleInput('input_issue')"> 
+                <label for="chk_issue">Книговыдача</label>
+            </div>
+            <input type="text" id="input_issue" class="input-field" placeholder="Кол-во выданных книг">
+
+            <div class="option-item">
+                <input type="checkbox" id="chk_new" onchange="toggleInput('input_new')"> 
+                <label for="chk_new">Новые читатели</label>
+            </div>
+            <input type="text" id="input_new" class="input-field" placeholder="Кол-во новых билетов">
+        </div>
+    </div>
+
+    <div class="section" data-section="events">
+        <h2>🎭 Массовые мероприятия</h2>
+        <div class="option-group">
+            <div class="option-item">
+                <input type="checkbox" id="chk_exhib" onchange="toggleInput('input_exhib')"> 
+                <label for="chk_exhib">Книжные выставки</label>
+            </div>
+            <input type="text" id="input_exhib" class="input-field" placeholder="Темы выставок">
+
+            <div class="option-item">
+                <input type="checkbox" id="chk_lect" onchange="toggleInput('input_lect')"> 
+                <label for="chk_lect">Лекции / Часы чтения</label>
+            </div>
+            <input type="text" id="input_lect" class="input-field" placeholder="Названия и охват">
+        </div>
+    </div>
+
+    <div class="section" data-section="analysis">
+        <h2>📈 Аналитика и планы</h2>
+        <div class="option-group">
+            <div class="option-item">
+                <input type="checkbox" id="chk_pop" onchange="toggleInput('input_pop')"> 
+                <label for="chk_pop">Популярные запросы</label>
+            </div>
+            <input type="text" id="input_pop" class="input-field" placeholder="Что чаще всего искали">
+
+            <div class="option-item">
+                <input type="checkbox" id="chk_plan" onchange="toggleInput('input_plan')"> 
+                <label for="chk_plan">План на след. период</label>
+            </div>
+            <input type="text" id="input_plan" class="input-field" placeholder="Ваши цели">
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn-yaml" onclick="generateYAML()">💾 YAML</button>
+        <button class="btn-excel" onclick="generateExcel()">📊 Excel</button>
+    </div>
+
+    <div class="footer">
+        Инструмент для автоматизации отчетности библиотекаря
+    </div>
+
+    <script>
+        function toggleInput(id) {
+            const input = document.getElementById(id);
+            const checkbox = document.querySelector(`input[onchange="toggleInput('${id}')"]`);
+            input.style.display = checkbox.checked ? 'block' : 'none';
+        }
+
+        function getData() {
+            let data = {
+                info: {
+                    Period: document.getElementById('period').value,
+                    Librarian: document.getElementById('librarian').value
+                },
+                details: []
+            };
+
+            const sections = document.querySelectorAll('.section[data-section]');
+            sections.forEach(section => {
+                const sectionName = section.querySelector('h2').innerText.replace(/[📦👥🎭📈]/g, '').trim();
+                const checkboxes = section.querySelectorAll('input[type="checkbox"]');
+                
+                checkboxes.forEach(cb => {
+                    if (cb.checked) {
+                        const inputId = cb.getAttribute('onchange').match(/'([^']+)'/)[1];
+                        const val = document.getElementById(inputId).value;
+                        const label = cb.nextElementSibling.innerText;
+                        data.details.push({
+                            Category: sectionName,
+                            Parameter: label,
+                            Value: val
+                        });
+                    }
+                });
+            });
+            return data;
+        }
+
+        function generateYAML() {
+            const data = getData();
+            let yaml = "report:\\n";
+            yaml += `  info:\\n`;
+            yaml += `    period: "${data.info.Period}"\\n`;
+            yaml += `    librarian: "${data.info.Librarian}"\\n`;
+
+            // Группировка по категориям для YAML
+            const groups = {};
+            data.details.forEach(item => {
+                if(!groups[item.Category]) groups[item.Category] = [];
+                groups[item.Category].push(`${item.Parameter}: "${item.Value}"`);
+            });
+
+            for(let cat in groups) {
+                yaml += `  ${cat}:\\n`;
+                groups[cat].forEach(line => {
+                    yaml += `    ${line}\\n`;
+                });
+            }
+
+            downloadFile('Отчетность.yaml', yaml);
+        }
+
+        function generateExcel() {
+            const data = getData();
+            
+            // Создаем массив для таблицы
+            const rows = [];
+            rows.push(["ОТЧЕТ БИБЛИОТЕКАРЯ"]); // Заголовок
+            rows.push([""]); // Пустая строка
+            rows.push(["Период:", data.info.Period]);
+            rows.push(["Библиотекарь:", data.info.Librarian]);
+            rows.push([""]); // Пустая строка
+            rows.push(["Категория", "Параметр", "Значение"]); // Шапка таблицы
+
+            data.details.forEach(item => {
+                rows.push([item.Category, item.Parameter, item.Value]);
+            });
+
+            // Создание книги Excel
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(rows);
+            
+            // Немного стилизуем ширину колонок
+            ws['!cols'] = [{ wch: 25 }, { wch: 25 }, { wch: 40 }];
+            
+            XLSX.utils.book_append_sheet(wb, ws, "Отчет");
+            XLSX.writeFile(wb, "Отчетность.xlsx");
+        }
+
+        function downloadFile(filename, text) {
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/yaml;charset=utf-8,' + encodeURIComponent(text));
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+    </script>
+</body>
+</html>
