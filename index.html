@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Конструктор отчета библиотекаря</title>
-    <!-- Используем самую стабильную версию SheetJS с официального CDN -->
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -57,6 +55,7 @@
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            box-sizing: border-box;
         }
         .controls {
             text-align: center;
@@ -64,6 +63,7 @@
             display: flex;
             gap: 15px;
             justify-content: center;
+            flex-wrap: wrap;
         }
         button {
             color: white;
@@ -78,7 +78,7 @@
         .btn-yaml:hover { background-color: #219150; }
         .btn-excel { background-color: #1f7244; }
         .btn-excel:hover { background-color: #165a35; }
-        
+
         .footer {
             text-align: center;
             font-size: 0.8em;
@@ -103,25 +103,25 @@
         <h2>📦 Работа с фондом</h2>
         <div class="option-group">
             <div class="option-item">
-                <input type="checkbox" id="chk_postup" onchange="toggleInput('input_postup')"> 
+                <input type="checkbox" id="chk_postup" onchange="toggleInput('input_postup')">
                 <label for="chk_postup">Поступления</label>
             </div>
             <input type="text" id="input_postup" class="input-field" placeholder="Кол-во или описание">
 
             <div class="option-item">
-                <input type="checkbox" id="chk_spis" onchange="toggleInput('input_spis')"> 
+                <input type="checkbox" id="chk_spis" onchange="toggleInput('input_spis')">
                 <label for="chk_spis">Списания</label>
             </div>
             <input type="text" id="input_spis" class="input-field" placeholder="Кол-во или описание">
 
             <div class="option-item">
-                <input type="checkbox" id="chk_kat" onchange="toggleInput('input_kat')"> 
+                <input type="checkbox" id="chk_kat" onchange="toggleInput('input_kat')">
                 <label for="chk_kat">Каталогизация/Обработка</label>
             </div>
             <input type="text" id="input_kat" class="input-field" placeholder="Кол-во или описание">
 
             <div class="option-item">
-                <input type="checkbox" id="chk_inv" onchange="toggleInput('input_inv')"> 
+                <input type="checkbox" id="chk_inv" onchange="toggleInput('input_inv')">
                 <label for="chk_inv">Инвентаризация</label>
             </div>
             <input type="text" id="input_inv" class="input-field" placeholder="Результат проверки">
@@ -132,19 +132,19 @@
         <h2>👥 Работа с читателями</h2>
         <div class="option-group">
             <div class="option-item">
-                <input type="checkbox" id="chk_visit" onchange="toggleInput('input_visit')"> 
+                <input type="checkbox" id="chk_visit" onchange="toggleInput('input_visit')">
                 <label for="chk_visit">Посещаемость</label>
             </div>
             <input type="text" id="input_visit" class="input-field" placeholder="Кол-во посещений">
 
             <div class="option-item">
-                <input type="checkbox" id="chk_issue" onchange="toggleInput('input_issue')"> 
+                <input type="checkbox" id="chk_issue" onchange="toggleInput('input_issue')">
                 <label for="chk_issue">Книговыдача</label>
             </div>
             <input type="text" id="input_issue" class="input-field" placeholder="Кол-во выданных книг">
 
             <div class="option-item">
-                <input type="checkbox" id="chk_new" onchange="toggleInput('input_new')"> 
+                <input type="checkbox" id="chk_new" onchange="toggleInput('input_new')">
                 <label for="chk_new">Новые читатели</label>
             </div>
             <input type="text" id="input_new" class="input-field" placeholder="Кол-во новых билетов">
@@ -155,13 +155,13 @@
         <h2>🎭 Массовые мероприятия</h2>
         <div class="option-group">
             <div class="option-item">
-                <input type="checkbox" id="chk_exhib" onchange="toggleInput('input_exhib')"> 
+                <input type="checkbox" id="chk_exhib" onchange="toggleInput('input_exhib')">
                 <label for="chk_exhib">Книжные выставки</label>
             </div>
             <input type="text" id="input_exhib" class="input-field" placeholder="Темы выставок">
 
             <div class="option-item">
-                <input type="checkbox" id="chk_lect" onchange="toggleInput('input_lect')"> 
+                <input type="checkbox" id="chk_lect" onchange="toggleInput('input_lect')">
                 <label for="chk_lect">Лекции / Часы чтения</label>
             </div>
             <input type="text" id="input_lect" class="input-field" placeholder="Названия и охват">
@@ -172,13 +172,13 @@
         <h2>📈 Аналитика и планы</h2>
         <div class="option-group">
             <div class="option-item">
-                <input type="checkbox" id="chk_pop" onchange="toggleInput('input_pop')"> 
+                <input type="checkbox" id="chk_pop" onchange="toggleInput('input_pop')">
                 <label for="chk_pop">Популярные запросы</label>
             </div>
             <input type="text" id="input_pop" class="input-field" placeholder="Что чаще всего искали">
 
             <div class="option-item">
-                <input type="checkbox" id="chk_plan" onchange="toggleInput('input_plan')"> 
+                <input type="checkbox" id="chk_plan" onchange="toggleInput('input_plan')">
                 <label for="chk_plan">План на след. период</label>
             </div>
             <input type="text" id="input_plan" class="input-field" placeholder="Ваши цели">
@@ -202,7 +202,7 @@
         }
 
         function getData() {
-            let data = {
+            const data = {
                 info: {
                     Period: document.getElementById('period').value,
                     Librarian: document.getElementById('librarian').value
@@ -214,7 +214,7 @@
             sections.forEach(section => {
                 const sectionName = section.querySelector('h2').innerText.replace(/[📦👥🎭📈]/g, '').trim();
                 const checkboxes = section.querySelectorAll('input[type="checkbox"]');
-                
+
                 checkboxes.forEach(cb => {
                     if (cb.checked) {
                         const inputId = cb.getAttribute('onchange').match(/'([^']+)'/)[1];
@@ -231,69 +231,138 @@
             return data;
         }
 
+        // ============ ЭКСПОРТ В YAML ============
         function generateYAML() {
             const data = getData();
             let yaml = "report:\n";
             yaml += `  info:\n`;
-            yaml += `    period: "${data.info.Period}"\n`;
-            yaml += `    librarian: "${data.info.Librarian}"\n`;
+            yaml += `    period: "${escapeYaml(data.info.Period)}"\n`;
+            yaml += `    librarian: "${escapeYaml(data.info.Librarian)}"\n`;
 
             const groups = {};
             data.details.forEach(item => {
-                if(!groups[item.Category]) groups[item.Category] = [];
-                groups[item.Category].push(`${item.Parameter}: "${item.Value}"`);
+                if (!groups[item.Category]) groups[item.Category] = [];
+                groups[item.Category].push(`    ${escapeYaml(item.Parameter)}: "${escapeYaml(item.Value)}"`);
             });
 
-            for(let cat in groups) {
+            for (const cat in groups) {
                 yaml += `  ${cat}:\n`;
                 groups[cat].forEach(line => {
-                    yaml += `    ${line}\n`;
+                    yaml += `${line}\n`;
                 });
             }
 
-            downloadFile('Отчетность.yaml', yaml);
+            downloadFile('Отчетность.yaml', yaml, 'text/yaml;charset=utf-8');
         }
 
+        function escapeYaml(str) {
+            return String(str ?? '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+        }
+
+        // ============ ЭКСПОРТ В EXCEL (без библиотек) ============
+        // Используем SpreadsheetML 2003 — Excel открывает файл как обычную таблицу.
         function generateExcel() {
-            try {
-                // Проверяем разные варианты именования глобального объекта SheetJS
-                const XLSXLib = window.XLSX || window.xlsx;
-                
-                if (!XLSXLib) {
-                    throw new Error("Библиотека SheetJS не обнаружена. Пожалуйста, попробуйте обновить страницу или проверить интернет-соединение.");
+            const data = getData();
+
+            const esc = s => String(s ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&apos;');
+
+            // Число, если строка целиком из цифр — иначе строка
+            const cell = (v) => {
+                if (v === null || v === undefined || v === '') {
+                    return `<Cell><Data ss:Type="String"></Data></Cell>`;
                 }
+                const s = String(v);
+                if (/^-?\d+(\.\d+)?$/.test(s.trim())) {
+                    return `<Cell><Data ss:Type="Number">${s.trim()}</Data></Cell>`;
+                }
+                return `<Cell><Data ss:Type="String">${esc(s)}</Data></Cell>`;
+            };
 
-                const data = getData();
-                const rows = [];
-                rows.push(["ОТЧЕТ БИБЛИОТЕКАРЯ"]);
-                rows.push([""]);
-                rows.push(["Период:", data.info.Period]);
-                rows.push(["Библиотекарь:", data.info.Librarian]);
-                rows.push([""]);
-                rows.push(["Категория", "Параметр", "Значение"]);
+            let rowsXml = '';
+            const addRow = (cells) => {
+                rowsXml += '<Row>' + cells.map(cell).join('') + '</Row>';
+            };
 
-                data.details.forEach(item => {
-                    rows.push([item.Category, item.Parameter, item.Value]);
-                });
+            // Заголовок
+            rowsXml += `<Row><Cell ss:MergeAcross="2" ss:StyleID="sTitle"><Data ss:Type="String">${esc('ОТЧЕТ БИБЛИОТЕКАРЯ')}</Data></Cell></Row>`;
+            addRow([]);
+            addRow(['Период:', data.info.Period]);
+            addRow(['Библиотекарь:', data.info.Librarian]);
+            addRow([]);
 
-                const wb = XLSXLib.utils.book_new();
-                const ws = XLSXLib.utils.aoa_to_sheet(rows);
-                ws['!cols'] = [{ wch: 25 }, { wch: 25 }, { wch: 40 }];
-                XLSXLib.utils.book_append_sheet(wb, ws, "Отчет");
-                XLSXLib.writeFile(wb, "Отчетность.xlsx");
-            } catch (e) {
-                alert("Ошибка при создании Excel файла: " + e.message);
-            }
+            // Шапка таблицы
+            rowsXml += `<Row>` +
+                `<Cell ss:StyleID="sHeader"><Data ss:Type="String">Категория</Data></Cell>` +
+                `<Cell ss:StyleID="sHeader"><Data ss:Type="String">Параметр</Data></Cell>` +
+                `<Cell ss:StyleID="sHeader"><Data ss:Type="String">Значение</Data></Cell>` +
+                `</Row>`;
+
+            // Данные
+            data.details.forEach(item => {
+                addRow([item.Category, item.Parameter, item.Value]);
+            });
+
+            const xml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+          xmlns:o="urn:schemas-microsoft-com:office:office"
+          xmlns:x="urn:schemas-microsoft-com:office:excel"
+          xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+          xmlns:html="http://www.w3.org/TR/REC-html40">
+  <Styles>
+    <Style ss:ID="Default" ss:Name="Normal">
+      <Alignment ss:Vertical="Bottom"/>
+      <Font ss:FontName="Calibri" ss:Size="11"/>
+    </Style>
+    <Style ss:ID="sTitle">
+      <Font ss:FontName="Calibri" ss:Size="14" ss:Bold="1"/>
+      <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+    </Style>
+    <Style ss:ID="sHeader">
+      <Font ss:FontName="Calibri" ss:Size="11" ss:Bold="1" ss:Color="#FFFFFF"/>
+      <Interior ss:Color="#1F7244" ss:Pattern="Solid"/>
+      <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+    </Style>
+  </Styles>
+  <Worksheet ss:Name="Отчет">
+    <Table>
+      <Column ss:Width="180"/>
+      <Column ss:Width="200"/>
+      <Column ss:Width="320"/>
+      ${rowsXml}
+    </Table>
+  </Worksheet>
+</Workbook>`;
+
+            // BOM для корректной кириллицы при открытии
+            const blob = new Blob(['\uFEFF' + xml], {
+                type: 'application/vnd.ms-excel;charset=utf-8'
+            });
+            downloadBlob('Отчетность.xls', blob);
         }
 
-        function downloadFile(filename, text) {
-            const element = document.createElement('a');
-            element.setAttribute('href', 'data:text/yaml;charset=utf-8,' + encodeURIComponent(text));
-            element.setAttribute('download', filename);
-            element.style.display = 'none';
-            document.body.appendChild(element);
-            element.click();
-            document.body.removeChild(element);
+        // ============ УТИЛИТЫ СКАЧИВАНИЯ ============
+        function downloadFile(filename, text, mime) {
+            const blob = new Blob([text], { type: mime || 'text/plain;charset=utf-8' });
+            downloadBlob(filename, blob);
+        }
+
+        function downloadBlob(filename, blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
         }
     </script>
 </body>
