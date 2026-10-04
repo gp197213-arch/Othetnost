@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Конструктор отчета библиотекаря</title>
-    <!-- Подключаем библиотеку для работы с Excel -->
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <!-- Подключаем библиотеку для работы с Excel (используем альтернативный CDN для надежности) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -256,6 +256,11 @@
 
         function generateExcel() {
             try {
+                // Проверка, загружена ли библиотека
+                if (typeof XLSX === 'undefined') {
+                    throw new Error("Библиотека SheetJS (XLSX) не была загружена. Пожалуйста, проверьте соединение с интернетом.");
+                }
+
                 const data = getData();
                 const rows = [];
                 rows.push(["ОТЧЕТ БИБЛИОТЕКАРЯ"]);
