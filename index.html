@@ -76,7 +76,7 @@
         }
         .btn-yaml { background-color: #27ae60; }
         .btn-yaml:hover { background-color: #219150; }
-        .btn-excel { background-color: #1f7244; } /* Цвет Excel */
+        .btn-excel { background-color: #1f7244; }
         .btn-excel:hover { background-color: #165a35; }
         
         .footer {
@@ -238,7 +238,6 @@
             yaml += `    period: "${data.info.Period}"\\n`;
             yaml += `    librarian: "${data.info.Librarian}"\\n`;
 
-            // Группировка по категориям для YAML
             const groups = {};
             data.details.forEach(item => {
                 if(!groups[item.Category]) groups[item.Category] = [];
@@ -256,30 +255,28 @@
         }
 
         function generateExcel() {
-            const data = getData();
-            
-            // Создаем массив для таблицы
-            const rows = [];
-            rows.push(["ОТЧЕТ БИБЛИОТЕКАРЯ"]); // Заголовок
-            rows.push([""]); // Пустая строка
-            rows.push(["Период:", data.info.Period]);
-            rows.push(["Библиотекарь:", data.info.Librarian]);
-            rows.push([""]); // Пустая строка
-            rows.push(["Категория", "Параметр", "Значение"]); // Шапка таблицы
+            try {
+                const data = getData();
+                const rows = [];
+                rows.push(["ОТЧЕТ БИБЛИОТЕКАРЯ"]);
+                rows.push([""]);
+                rows.push(["Период:", data.info.Period]);
+                rows.push(["Библиотекарь:", data.info.Librarian]);
+                rows.push([""]);
+                rows.push(["Категория", "Параметр", "Значение"]);
 
-            data.details.forEach(item => {
-                rows.push([item.Category, item.Parameter, item.Value]);
-            });
+                data.details.forEach(item => {
+                    rows.push([item.Category, item.Parameter, item.Value]);
+                });
 
-            // Создание книги Excel
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet(rows);
-            
-            // Немного стилизуем ширину колонок
-            ws['!cols'] = [{ wch: 25 }, { wch: 25 }, { wch: 40 }];
-            
-            XLSX.utils.book_append_sheet(wb, ws, "Отчет");
-            XLSX.writeFile(wb, "Отчетность.xlsx");
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.aoa_to_sheet(rows);
+                ws['!cols'] = [{ wch: 25 }, { wch: 25 }, { wch: 40 }];
+                XLSX.utils.book_append_sheet(wb, ws, "Отчет");
+                XLSX.writeFile(wb, "Отчетность.xlsx");
+            } catch (e) {
+                alert("Ошибка при создании Excel файла: " + e.message);
+            }
         }
 
         function downloadFile(filename, text) {
