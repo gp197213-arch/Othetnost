@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Конструктор отчета библиотекаря</title>
-    <!-- Подключаем библиотеку для работы с Excel (используем альтернативный CDN для надежности) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Используем самую стабильную версию SheetJS с официального CDN -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -233,10 +233,10 @@
 
         function generateYAML() {
             const data = getData();
-            let yaml = "report:\\n";
-            yaml += `  info:\\n`;
-            yaml += `    period: "${data.info.Period}"\\n`;
-            yaml += `    librarian: "${data.info.Librarian}"\\n`;
+            let yaml = "report:\n";
+            yaml += `  info:\n`;
+            yaml += `    period: "${data.info.Period}"\n`;
+            yaml += `    librarian: "${data.info.Librarian}"\n`;
 
             const groups = {};
             data.details.forEach(item => {
@@ -245,9 +245,9 @@
             });
 
             for(let cat in groups) {
-                yaml += `  ${cat}:\\n`;
+                yaml += `  ${cat}:\n`;
                 groups[cat].forEach(line => {
-                    yaml += `    ${line}\\n`;
+                    yaml += `    ${line}\n`;
                 });
             }
 
@@ -256,9 +256,11 @@
 
         function generateExcel() {
             try {
-                // Проверка, загружена ли библиотека
-                if (typeof XLSX === 'undefined') {
-                    throw new Error("Библиотека SheetJS (XLSX) не была загружена. Пожалуйста, проверьте соединение с интернетом.");
+                // Проверяем разные варианты именования глобального объекта SheetJS
+                const XLSXLib = window.XLSX || window.xlsx;
+                
+                if (!XLSXLib) {
+                    throw new Error("Библиотека SheetJS не обнаружена. Пожалуйста, попробуйте обновить страницу или проверить интернет-соединение.");
                 }
 
                 const data = getData();
@@ -274,11 +276,11 @@
                     rows.push([item.Category, item.Parameter, item.Value]);
                 });
 
-                const wb = XLSX.utils.book_new();
-                const ws = XLSX.utils.aoa_to_sheet(rows);
+                const wb = XLSXLib.utils.book_new();
+                const ws = XLSXLib.utils.aoa_to_sheet(rows);
                 ws['!cols'] = [{ wch: 25 }, { wch: 25 }, { wch: 40 }];
-                XLSX.utils.book_append_sheet(wb, ws, "Отчет");
-                XLSX.writeFile(wb, "Отчетность.xlsx");
+                XLSXLib.utils.book_append_sheet(wb, ws, "Отчет");
+                XLSXLib.writeFile(wb, "Отчетность.xlsx");
             } catch (e) {
                 alert("Ошибка при создании Excel файла: " + e.message);
             }
